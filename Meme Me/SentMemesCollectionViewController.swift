@@ -14,14 +14,14 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
     
     var filePath: String {
         let manager = NSFileManager.defaultManager()
-        let url = manager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first as NSURL
+        let url = manager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first as! NSURL
         return url.URLByAppendingPathComponent("objectArray").path!
     }
     
     @IBOutlet weak var collectionView: UICollectionView!
     
     override func viewDidLoad() {
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         if let array = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as? [Meme] {
             appDelegate.memes = array
@@ -31,7 +31,7 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         let object = UIApplication.sharedApplication().delegate
-        let appDelegate = object as AppDelegate
+        let appDelegate = object as! AppDelegate
         //shared model
         self.memes = appDelegate.memes
         //update collection view
@@ -45,7 +45,7 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
     
     //display the memed image and text for every cell in the collectionview
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("MemeCell", forIndexPath: indexPath) as CustomMemeCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("MemeCell", forIndexPath: indexPath) as! CustomMemeCell
         cell.cellImage.image = memes[indexPath.row].memedImage
         cell.cellLabel.text = memes[indexPath.row].topText! + " " + memes[indexPath.row].bottomText!
         return cell
@@ -54,7 +54,7 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
     //segue to another view and show detail for every cell
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let object: AnyObject = self.storyboard!.instantiateViewControllerWithIdentifier("DetailVC")
-        let detailVC = object as DetailViewController
+        let detailVC = object as! DetailViewController
         detailVC.memes = self.memes
         detailVC.key = indexPath.item
         self.navigationController!.pushViewController(detailVC, animated: true)

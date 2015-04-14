@@ -12,7 +12,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     var filePath: String {
         let manager = NSFileManager.defaultManager()
-        let url = manager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first as NSURL
+        let url = manager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first as! NSURL
         return url.URLByAppendingPathComponent("objectArray").path!
     }
     
@@ -142,7 +142,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         //append the meme to the shared model
         let object = UIApplication.sharedApplication().delegate
-        let appDelegate = object as AppDelegate
+        let appDelegate = object as! AppDelegate
         appDelegate.memes.append(meme)
         
         let memesToBeSaved = appDelegate.memes as [Meme]
@@ -177,7 +177,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     //gets the keyboard height
     func getKeyboardHeight(notification: NSNotification) -> CGFloat {
         let userInfo = notification.userInfo
-        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as NSValue
+        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
         if bottomTextField.editing {
             return keyboardSize.CGRectValue().height
         } else {
