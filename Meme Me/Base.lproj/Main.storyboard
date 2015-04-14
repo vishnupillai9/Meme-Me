@@ -162,6 +162,7 @@
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="mbv-WZ-Z6M">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="3s4-kf-kHe">
                                     <size key="itemSize" width="150" height="250"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -176,21 +177,20 @@
                                             <rect key="frame" x="0.0" y="0.0" width="150" height="250"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aZa-UY-SJg">
-                                                    <rect key="frame" x="8" y="221" width="134" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bj5-b5-i4r">
-                                                    <rect key="frame" x="8" y="8" width="134" height="205"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bj5-b5-i4r">
+                                                    <rect key="frame" x="0.0" y="0.0" width="150" height="250"/>
                                                 </imageView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="bj5-b5-i4r" secondAttribute="trailing" id="6zf-mk-65u"/>
+                                            <constraint firstItem="bj5-b5-i4r" firstAttribute="top" secondItem="qzM-WD-j9n" secondAttribute="top" id="Lte-DG-2i4"/>
+                                            <constraint firstItem="bj5-b5-i4r" firstAttribute="leading" secondItem="qzM-WD-j9n" secondAttribute="leading" id="wfN-pU-63p"/>
+                                            <constraint firstAttribute="bottom" secondItem="bj5-b5-i4r" secondAttribute="bottom" id="zkA-cE-bxF"/>
+                                        </constraints>
                                         <connections>
                                             <outlet property="cellImage" destination="bj5-b5-i4r" id="tPB-o6-Oiz"/>
-                                            <outlet property="cellLabel" destination="aZa-UY-SJg" id="aSy-5W-HIa"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -319,6 +319,6 @@
         <image name="tableview" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="nVf-LD-qyM"/>
+        <segue reference="ezk-Yb-2TH"/>
     </inferredMetricsTieBreakers>
 </document>

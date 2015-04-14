@@ -47,7 +47,7 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("MemeCell", forIndexPath: indexPath) as! CustomMemeCell
         cell.cellImage.image = memes[indexPath.row].memedImage
-        cell.cellLabel.text = memes[indexPath.row].topText! + " " + memes[indexPath.row].bottomText!
+        //cell.cellLabel.text = memes[indexPath.row].topText! + " " + memes[indexPath.row].bottomText!
         return cell
     }
     
@@ -59,4 +59,21 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
         detailVC.key = indexPath.item
         self.navigationController!.pushViewController(detailVC, animated: true)
     }
+    
+    //Changing the size of the cell depending on the width of the device
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        
+        let width = self.view.frame.size.width / 3.33
+        let height = self.view.frame.size.height / 3.33
+        return CGSizeMake(width, height)
+        
+    }
+    
+    //Setting the left and right inset for cells
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        
+        return UIEdgeInsetsMake(5.0, 5.0, 5.0, 5.0)
+
+    }
+    
 }
