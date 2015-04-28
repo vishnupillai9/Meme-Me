@@ -19,6 +19,18 @@ class SentMemesTableViewController: UIViewController, UITableViewDelegate, UITab
     
     @IBOutlet weak var tableView: UITableView!
     
+    //MARK: - Life Cycle
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        let object = UIApplication.sharedApplication().delegate
+        let appDelegate = object as! AppDelegate
+        //shared model
+        self.memes = appDelegate.memes
+        //update tableview
+        self.tableView.reloadData()
+    }
+    
     override func viewDidLoad() {
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
@@ -26,6 +38,8 @@ class SentMemesTableViewController: UIViewController, UITableViewDelegate, UITab
             appDelegate.memes = array
         }
     }
+    
+    //MARK: - Table View Delegate
     
     //return the number of rows
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -40,16 +54,6 @@ class SentMemesTableViewController: UIViewController, UITableViewDelegate, UITab
         return cell
     }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(true)
-        let object = UIApplication.sharedApplication().delegate
-        let appDelegate = object as! AppDelegate
-        //shared model
-        self.memes = appDelegate.memes
-        //update tableview
-        self.tableView.reloadData()
-    }
-    
     //segue to another view and show detail for every cell
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let object: AnyObject = self.storyboard!.instantiateViewControllerWithIdentifier("DetailVC")
@@ -59,5 +63,23 @@ class SentMemesTableViewController: UIViewController, UITableViewDelegate, UITab
         self.navigationController!.pushViewController(detailVC, animated: true)
     }
     
+    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if editingStyle == UITableViewCellEditingStyle.Delete {
+            memes.removeAtIndex(indexPath.row)
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            
+            //Update model after deletion
+            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            appDelegate.memes = self.memes
+            
+            //Save
+            let memesToBeSaved = appDelegate.memes as [Meme]
+            NSKeyedArchiver.archiveRootObject(memesToBeSaved, toFile: filePath)
+        }
+    }
     
 }

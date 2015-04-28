@@ -8,9 +8,10 @@
 
 import UIKit
 
-class SentMemesCollectionViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class SentMemesCollectionViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate {
     
     var memes: [Meme]!
+    var currentIndex: NSIndexPath?
     
     var filePath: String {
         let manager = NSFileManager.defaultManager()
@@ -20,13 +21,7 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
     
     @IBOutlet weak var collectionView: UICollectionView!
     
-    override func viewDidLoad() {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        if let array = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as? [Meme] {
-            appDelegate.memes = array
-        }
-    }
+    //MARK: - Life Cycle
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
@@ -37,6 +32,23 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
         //update collection view
         self.collectionView.reloadData()
     }
+    
+    override func viewDidLoad() {
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        if let array = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as? [Meme] {
+            appDelegate.memes = array
+        }
+        
+        //Long press gesture recognizer for cells
+        var lgpr = UILongPressGestureRecognizer(target: self, action: "handleLongPress:")
+        lgpr.minimumPressDuration = 0.5
+        lgpr.delegate = self
+        self.collectionView.addGestureRecognizer(lgpr)
+        
+    }
+    
+    //MARK: - Collection View Delegate
     
     //return the number of rows
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -60,6 +72,8 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
         self.navigationController!.pushViewController(detailVC, animated: true)
     }
     
+    //MARK: - Collection View Delegate Flow Layout
+    
     //Changing the size of the cell depending on the width of the device
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         
@@ -74,6 +88,47 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
         
         return UIEdgeInsetsMake(5.0, 5.0, 5.0, 5.0)
 
+    }
+    
+    //MARK: - Actions
+    
+    func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
+        if gestureRecognizer.state != UIGestureRecognizerState.Ended {
+            return
+        }
+        let point: CGPoint = gestureRecognizer.locationInView(self.collectionView)
+        let indexPath: NSIndexPath? = self.collectionView.indexPathForItemAtPoint(point)
+        
+        if indexPath == nil {
+            println("Couldn't find indexPath")
+        } else {
+            let cell = self.collectionView.cellForItemAtIndexPath(indexPath!)! as! CustomMemeCell
+            currentIndex = indexPath
+            
+            var alertControllerForDeletingMeme: UIAlertController
+            
+            alertControllerForDeletingMeme = UIAlertController(title: "This meme will be deleted from the collection.", message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+            alertControllerForDeletingMeme.addAction(UIAlertAction(title: "Delete Meme", style: UIAlertActionStyle.Destructive, handler: deleteMeme))
+            alertControllerForDeletingMeme.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+            
+            self.presentViewController(alertControllerForDeletingMeme, animated: true, completion: nil)
+            
+        }
+    }
+    
+    func deleteMeme(sender: UIAlertAction!) -> Void {
+        let index = currentIndex
+        
+        memes.removeAtIndex(index!.row)
+        collectionView.deleteItemsAtIndexPaths([index!])
+        
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        appDelegate.memes = self.memes
+        
+        let memesToBeSaved = appDelegate.memes as [Meme]
+        NSKeyedArchiver.archiveRootObject(memesToBeSaved, toFile: filePath)
+        
+        self.collectionView.reloadData()
     }
     
 }

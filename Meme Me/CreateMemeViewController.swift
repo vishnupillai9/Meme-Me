@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  CreateMemeViewController.swift
 //  Meme Me
 //
 //  Created by Vishnu on 14/03/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+class CreateMemeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
     
     var filePath: String {
         let manager = NSFileManager.defaultManager()
@@ -23,11 +23,23 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         NSStrokeWidthAttributeName: -2.0
     ]
     
-    //action to dismiss the view
-    @IBAction func dismissAction(sender: UIBarButtonItem) {
-        dismissViewControllerAnimated(true, completion: nil)
+    @IBOutlet weak var pickButton: UIBarButtonItem!
+    @IBOutlet weak var cameraButton: UIBarButtonItem!
+    @IBOutlet weak var shareButton: UIBarButtonItem!
+    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var topTextField: UITextField!
+    @IBOutlet weak var bottomTextField: UITextField!
+    @IBOutlet weak var toolbar: UIToolbar!
+    
+    //MARK: - Life Cycle
+    
+    override func viewWillAppear(animated: Bool) {
+        //enable the camera button if camera is available
+        cameraButton.enabled = UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera)
+        //subscribe to keyboard notifications to shift view up when keyboard is shown
+        self.subscribeToKeyboardNotifications()
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -48,25 +60,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         shareButton.enabled = false
     }
     
-    override func viewWillAppear(animated: Bool) {
-        //enable the camera button if camera is available
-        cameraButton.enabled = UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera)
-        //subscribe to keyboard notifications to shift view up when keyboard is shown
-        self.subscribeToKeyboardNotifications()
-    }
-    
     override func viewWillDisappear(animated: Bool) {
         //unsubscribe from keyboard notifications
         self.unsubscribeFromKeyboardNotifications()
     }
     
-    @IBOutlet weak var pickButton: UIBarButtonItem!
-    @IBOutlet weak var cameraButton: UIBarButtonItem!
-    @IBOutlet weak var shareButton: UIBarButtonItem!
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var topTextField: UITextField!
-    @IBOutlet weak var bottomTextField: UITextField!
-    @IBOutlet weak var toolbar: UIToolbar!
+    //MARK: - Text Field Delegate
     
     func textFieldDidBeginEditing(textField: UITextField) {
         //clear the textfield if the text is top or bottom
@@ -83,6 +82,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return true
     }
     
+    //MARK: - Image Picker Controller Delegate
+    
     //Setting the view's image as the one picked
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
@@ -97,6 +98,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    //MARK: - Actions
     
     //To pick an existing image
     @IBAction func pickImageFromAlbum (sender: AnyObject) {
@@ -128,6 +131,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
 
     }
+    
+    //action to dismiss the view
+    @IBAction func dismissAction(sender: UIBarButtonItem) {
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    //MARK: - Helpers
     
     //save the meme
     func save() {
@@ -163,6 +173,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         toolbar.hidden = false
         return memedImage
     }
+    
+    //MARK: - Notification Center
     
     //Moving up view when keyboard is on screen
     func keyboardWillShow(notification: NSNotification) {
