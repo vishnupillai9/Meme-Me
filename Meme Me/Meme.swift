@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-//Meme model
+// Meme model
 class Meme: NSObject, NSCoding {
     
     struct Keys {
@@ -31,17 +31,17 @@ class Meme: NSObject, NSCoding {
         memedImage = dictionary[Keys.MemedImage] as? UIImage
     }
     
-    required init(coder decoder: NSCoder) {
-        self.topText = decoder.decodeObjectForKey(Keys.TopText) as? String
-        self.bottomText = decoder.decodeObjectForKey(Keys.BottomText) as? String
-        self.image = decoder.decodeObjectForKey(Keys.Image) as? UIImage
-        self.memedImage = decoder.decodeObjectForKey(Keys.MemedImage) as? UIImage
+    required init?(coder decoder: NSCoder) {
+        topText = decoder.decodeObjectForKey(Keys.TopText) as? String
+        bottomText = decoder.decodeObjectForKey(Keys.BottomText) as? String
+        image = decoder.decodeObjectForKey(Keys.Image) as? UIImage
+        memedImage = decoder.decodeObjectForKey(Keys.MemedImage) as? UIImage
     }
     
     func encodeWithCoder(encoder: NSCoder) {
-        encoder.encodeObject(self.topText, forKey: Keys.TopText)
-        encoder.encodeObject(self.bottomText, forKey: Keys.BottomText)
-        encoder.encodeObject(self.image, forKey: Keys.Image)
-        encoder.encodeObject(self.memedImage, forKey: Keys.MemedImage)
+        encoder.encodeObject(topText, forKey: Keys.TopText)
+        encoder.encodeObject(bottomText, forKey: Keys.BottomText)
+        encoder.encodeObject(image, forKey: Keys.Image)
+        encoder.encodeObject(memedImage, forKey: Keys.MemedImage)
     }
 }

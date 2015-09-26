@@ -8,7 +8,7 @@
 
 import UIKit
 
-//custom meme cell for collectionview
+// Custom meme cell for collectionview
 class CustomMemeCell: UICollectionViewCell {
     
     @IBOutlet weak var cellImage: UIImageView!

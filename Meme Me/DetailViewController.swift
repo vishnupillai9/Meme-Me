@@ -8,7 +8,7 @@
 
 import UIKit
 
-//detail view controller to show the memed image
+// Detail view controller to show the memed image
 class DetailViewController: UIViewController {
 
     var memes:[Meme]!

@@ -13,22 +13,22 @@ class SentMemesTableViewController: UIViewController, UITableViewDelegate, UITab
     
     var filePath: String {
         let manager = NSFileManager.defaultManager()
-        let url = manager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first as! NSURL
+        let url = manager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
         return url.URLByAppendingPathComponent("objectArray").path!
     }
     
     @IBOutlet weak var tableView: UITableView!
     
-    //MARK: - Life Cycle
+    // MARK: - Life Cycle
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         let object = UIApplication.sharedApplication().delegate
         let appDelegate = object as! AppDelegate
-        //shared model
-        self.memes = appDelegate.memes
-        //update tableview
-        self.tableView.reloadData()
+        // Shared model
+        memes = appDelegate.memes
+        // Update tableview
+        tableView.reloadData()
     }
     
     override func viewDidLoad() {
@@ -39,28 +39,28 @@ class SentMemesTableViewController: UIViewController, UITableViewDelegate, UITab
         }
     }
     
-    //MARK: - Table View Delegate
+    // MARK: - Table View Delegate
     
-    //return the number of rows
+    // Return the number of rows
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return memes.count
     }
     
-    //display the memed image and text for every cell in the tableview
+    // Display the memed image and text for every cell in the tableview
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier("MemeCell") as! UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("MemeCell")!
         cell.imageView?.image = memes[indexPath.row].memedImage
         cell.textLabel?.text = memes[indexPath.row].topText! + " " + memes[indexPath.row].bottomText!
         return cell
     }
     
-    //segue to another view and show detail for every cell
+    // Segue to another view and show detail for every cell
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let object: AnyObject = self.storyboard!.instantiateViewControllerWithIdentifier("DetailVC")
+        let object: AnyObject = storyboard!.instantiateViewControllerWithIdentifier("DetailVC")
         let detailVC = object as! DetailViewController
-        detailVC.memes = self.memes
+        detailVC.memes = memes
         detailVC.key = indexPath.row
-        self.navigationController!.pushViewController(detailVC, animated: true)
+        navigationController!.pushViewController(detailVC, animated: true)
     }
     
     func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -72,11 +72,11 @@ class SentMemesTableViewController: UIViewController, UITableViewDelegate, UITab
             memes.removeAtIndex(indexPath.row)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
             
-            //Update model after deletion
+            // Update model after deletion
             let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-            appDelegate.memes = self.memes
+            appDelegate.memes = memes
             
-            //Save
+            // Save
             let memesToBeSaved = appDelegate.memes as [Meme]
             NSKeyedArchiver.archiveRootObject(memesToBeSaved, toFile: filePath)
         }
