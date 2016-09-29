@@ -12,18 +12,18 @@ class SentMemesTableViewController: UIViewController, UITableViewDelegate, UITab
     var memes: [Meme]!
     
     var filePath: String {
-        let manager = NSFileManager.defaultManager()
-        let url = manager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
-        return url.URLByAppendingPathComponent("objectArray").path!
+        let manager = FileManager.default
+        let url = manager.urls(for: .documentDirectory, in: .userDomainMask).first!
+        return url.appendingPathComponent("objectArray").path
     }
     
     @IBOutlet weak var tableView: UITableView!
     
     // MARK: - Life Cycle
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        let object = UIApplication.sharedApplication().delegate
+        let object = UIApplication.shared.delegate
         let appDelegate = object as! AppDelegate
         // Shared model
         memes = appDelegate.memes
@@ -32,9 +32,9 @@ class SentMemesTableViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     override func viewDidLoad() {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         
-        if let array = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as? [Meme] {
+        if let array = NSKeyedUnarchiver.unarchiveObject(withFile: filePath) as? [Meme] {
             appDelegate.memes = array
         }
     }
@@ -42,38 +42,38 @@ class SentMemesTableViewController: UIViewController, UITableViewDelegate, UITab
     // MARK: - Table View Delegate
     
     // Return the number of rows
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return memes.count
     }
     
     // Display the memed image and text for every cell in the tableview
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("MemeCell")!
-        cell.imageView?.image = memes[indexPath.row].memedImage
-        cell.textLabel?.text = memes[indexPath.row].topText! + " " + memes[indexPath.row].bottomText!
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MemeCell")!
+        cell.imageView?.image = memes[(indexPath as NSIndexPath).row].memedImage
+        cell.textLabel?.text = memes[(indexPath as NSIndexPath).row].topText! + " " + memes[(indexPath as NSIndexPath).row].bottomText!
         return cell
     }
     
     // Segue to another view and show detail for every cell
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let object: AnyObject = storyboard!.instantiateViewControllerWithIdentifier("DetailVC")
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let object: AnyObject = storyboard!.instantiateViewController(withIdentifier: "DetailVC")
         let detailVC = object as! DetailViewController
         detailVC.memes = memes
-        detailVC.key = indexPath.row
+        detailVC.key = (indexPath as NSIndexPath).row
         navigationController!.pushViewController(detailVC, animated: true)
     }
     
-    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
     
-    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.Delete {
-            memes.removeAtIndex(indexPath.row)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == UITableViewCellEditingStyle.delete {
+            memes.remove(at: (indexPath as NSIndexPath).row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
             
             // Update model after deletion
-            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
             appDelegate.memes = memes
             
             // Save

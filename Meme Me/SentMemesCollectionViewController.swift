@@ -11,21 +11,21 @@ import UIKit
 class SentMemesCollectionViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate {
     
     var memes: [Meme]!
-    var currentIndex: NSIndexPath?
+    var currentIndex: IndexPath?
     
     var filePath: String {
-        let manager = NSFileManager.defaultManager()
-        let url = manager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
-        return url.URLByAppendingPathComponent("objectArray").path!
+        let manager = FileManager.default
+        let url = manager.urls(for: .documentDirectory, in: .userDomainMask).first!
+        return url.appendingPathComponent("objectArray").path
     }
     
     @IBOutlet weak var collectionView: UICollectionView!
     
     // MARK: - Life Cycle
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        let object = UIApplication.sharedApplication().delegate
+        let object = UIApplication.shared.delegate
         let appDelegate = object as! AppDelegate
         // Shared model
         memes = appDelegate.memes
@@ -34,14 +34,14 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
     }
     
     override func viewDidLoad() {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         
-        if let array = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as? [Meme] {
+        if let array = NSKeyedUnarchiver.unarchiveObject(withFile: filePath) as? [Meme] {
             appDelegate.memes = array
         }
         
         // Long press gesture recognizer for cells
-        let lgpr = UILongPressGestureRecognizer(target: self, action: "handleLongPress:")
+        let lgpr = UILongPressGestureRecognizer(target: self, action: #selector(SentMemesCollectionViewController.handleLongPress(_:)))
         lgpr.minimumPressDuration = 0.5
         lgpr.delegate = self
         collectionView.addGestureRecognizer(lgpr)
@@ -51,40 +51,40 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
     // MARK: - Collection View Delegate
     
     // Return the number of rows
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return memes.count
     }
     
     // Display the memed image and text for every cell in the collectionview
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("MemeCell", forIndexPath: indexPath) as! CustomMemeCell
-        cell.cellImage.image = memes[indexPath.row].memedImage
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MemeCell", for: indexPath) as! CustomMemeCell
+        cell.cellImage.image = memes[(indexPath as NSIndexPath).row].memedImage
         //cell.cellLabel.text = memes[indexPath.row].topText! + " " + memes[indexPath.row].bottomText!
         return cell
     }
     
     // Segue to another view and show detail for every cell
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let object: AnyObject = storyboard!.instantiateViewControllerWithIdentifier("DetailVC")
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let object: AnyObject = storyboard!.instantiateViewController(withIdentifier: "DetailVC")
         let detailVC = object as! DetailViewController
         detailVC.memes = memes
-        detailVC.key = indexPath.item
+        detailVC.key = (indexPath as NSIndexPath).item
         navigationController!.pushViewController(detailVC, animated: true)
     }
     
     // MARK: - Collection View Delegate Flow Layout
     
     // Changing the size of the cell depending on the width of the device
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         let width = view.frame.size.width / 3.33
         let height = view.frame.size.height / 3.33
-        return CGSizeMake(width, height)
+        return CGSize(width: width, height: height)
         
     }
     
     // Setting the left and right inset for cells
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         
         return UIEdgeInsetsMake(5.0, 5.0, 5.0, 5.0)
 
@@ -92,12 +92,12 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
     
     // MARK: - Actions
     
-    func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
-        if gestureRecognizer.state != UIGestureRecognizerState.Ended {
+    func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        if gestureRecognizer.state != UIGestureRecognizerState.ended {
             return
         }
-        let point: CGPoint = gestureRecognizer.locationInView(collectionView)
-        let indexPath: NSIndexPath? = collectionView.indexPathForItemAtPoint(point)
+        let point: CGPoint = gestureRecognizer.location(in: collectionView)
+        let indexPath: IndexPath? = collectionView.indexPathForItem(at: point)
         
         if indexPath == nil {
             print("Couldn't find indexPath")
@@ -106,21 +106,21 @@ class SentMemesCollectionViewController: UIViewController, UICollectionViewDeleg
             
             var alertControllerForDeletingMeme: UIAlertController
             
-            alertControllerForDeletingMeme = UIAlertController(title: "This meme will be deleted from the collection.", message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
-            alertControllerForDeletingMeme.addAction(UIAlertAction(title: "Delete Meme", style: UIAlertActionStyle.Destructive, handler: deleteMeme))
-            alertControllerForDeletingMeme.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+            alertControllerForDeletingMeme = UIAlertController(title: "This meme will be deleted from the collection.", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+            alertControllerForDeletingMeme.addAction(UIAlertAction(title: "Delete Meme", style: UIAlertActionStyle.destructive, handler: deleteMeme))
+            alertControllerForDeletingMeme.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
             
-            presentViewController(alertControllerForDeletingMeme, animated: true, completion: nil)
+            present(alertControllerForDeletingMeme, animated: true, completion: nil)
         }
     }
     
-    func deleteMeme(sender: UIAlertAction!) -> Void {
+    func deleteMeme(_ sender: UIAlertAction!) -> Void {
         let index = currentIndex
         
-        memes.removeAtIndex(index!.row)
-        collectionView.deleteItemsAtIndexPaths([index!])
+        memes.remove(at: (index! as NSIndexPath).row)
+        collectionView.deleteItems(at: [index!])
         
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appDelegate.memes = memes
         
         let memesToBeSaved = appDelegate.memes as [Meme]

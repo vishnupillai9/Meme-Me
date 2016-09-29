@@ -32,16 +32,16 @@ class Meme: NSObject, NSCoding {
     }
     
     required init?(coder decoder: NSCoder) {
-        topText = decoder.decodeObjectForKey(Keys.TopText) as? String
-        bottomText = decoder.decodeObjectForKey(Keys.BottomText) as? String
-        image = decoder.decodeObjectForKey(Keys.Image) as? UIImage
-        memedImage = decoder.decodeObjectForKey(Keys.MemedImage) as? UIImage
+        topText = decoder.decodeObject(forKey: Keys.TopText) as? String
+        bottomText = decoder.decodeObject(forKey: Keys.BottomText) as? String
+        image = decoder.decodeObject(forKey: Keys.Image) as? UIImage
+        memedImage = decoder.decodeObject(forKey: Keys.MemedImage) as? UIImage
     }
     
-    func encodeWithCoder(encoder: NSCoder) {
-        encoder.encodeObject(topText, forKey: Keys.TopText)
-        encoder.encodeObject(bottomText, forKey: Keys.BottomText)
-        encoder.encodeObject(image, forKey: Keys.Image)
-        encoder.encodeObject(memedImage, forKey: Keys.MemedImage)
+    func encode(with encoder: NSCoder) {
+        encoder.encode(topText, forKey: Keys.TopText)
+        encoder.encode(bottomText, forKey: Keys.BottomText)
+        encoder.encode(image, forKey: Keys.Image)
+        encoder.encode(memedImage, forKey: Keys.MemedImage)
     }
 }

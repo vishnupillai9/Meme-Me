@@ -26,6 +26,10 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>The app uses the photos from the Photo Library for your Memes</string>
+	<key>NSCameraUsageDescription</key>
+	<string>The app uses the photos captured from the Camera for your Memes</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
